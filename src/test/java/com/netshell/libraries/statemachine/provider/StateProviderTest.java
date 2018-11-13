@@ -39,29 +39,29 @@ class StateProviderTest {
     }
 
     private State getActual(String state, StateEvent event) {
-        return provider.nextState(state != null ? new State<>(state) : null, event);
+        return provider.nextState(state != null ? State.from(state) : null, event);
     }
 
     private final static class SPMetadata implements StateProviderMetadata<String> {
         @Override
         public Set<State<String>> getStates() {
             return new HashSet<>(Arrays.asList(
-                new State<>("init"),
-                new State<>("ack"),
-                new State<>("inp"),
-                new State<>("complete"),
-                new State<>("failed")
+                    State.from("init"),
+                    State.from("ack"),
+                    State.from("inp"),
+                    State.from("complete"),
+                    State.from("failed")
             ));
         }
 
         @Override
         public Set<Transition<String>> getTransitions() {
             final Set<Transition<String>> set = new HashSet<>();
-            set.add(new Transition<>(null, new State<>("init"), StateEvent.INIT));
-            set.add(new Transition<>(new State<>("init"), new State<>("ack"), StateEvent.SUCCESS));
-            set.add(new Transition<>(new State<>("ack"), new State<>("inp"), StateEvent.SUCCESS));
-            set.add(new Transition<>(new State<>("ack"), new State<>("complete"), StateEvent.COMPLETE));
-            set.add(new Transition<>(new State<>("ack"), new State<>("failed"), StateEvent.FAIL));
+            set.add(new Transition<>(null, State.from("init"), StateEvent.INIT));
+            set.add(new Transition<>(State.from("init"), State.from("ack"), StateEvent.SUCCESS));
+            set.add(new Transition<>(State.from("ack"), State.from("inp"), StateEvent.SUCCESS));
+            set.add(new Transition<>(State.from("ack"), State.from("complete"), StateEvent.COMPLETE));
+            set.add(new Transition<>(State.from("ack"), State.from("failed"), StateEvent.FAIL));
             return set;
         }
 

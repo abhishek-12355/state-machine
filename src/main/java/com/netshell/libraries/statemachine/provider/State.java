@@ -6,6 +6,10 @@ public final class State<T> {
 
     private final T state;
 
+    public static <U> State<U> from(U u) {
+        return new State<>(u);
+    }
+
     public State(final T state) {
         this.state = state;
     }

@@ -16,22 +16,22 @@ public class TransitionSetBuilder<T> {
             throw new IllegalStateException("At most 1 Initial State Transition can be defined");
         }
 
-        tSet.add(new Transition<>(null, new State<>(toState), StateEvent.INIT));
+        tSet.add(new Transition<>(null, State.from(toState), StateEvent.INIT));
         return this;
     }
 
     TransitionSetBuilder withTransitionSuccess(final T fromState, final T toState) {
-        tSet.add(new Transition<>(new State<>(fromState), new State<>(toState), StateEvent.SUCCESS));
+        tSet.add(new Transition<>(State.from(fromState), State.from(toState), StateEvent.SUCCESS));
         return this;
     }
 
     TransitionSetBuilder withTransitionFail(final T fromState, final T toState) {
-        tSet.add(new Transition<>(new State<>(fromState), new State<>(toState), StateEvent.FAIL));
+        tSet.add(new Transition<>(State.from(fromState), State.from(toState), StateEvent.FAIL));
         return this;
     }
 
     TransitionSetBuilder withTransitionComplete(final T fromState, final T toState) {
-        tSet.add(new Transition<>(new State<>(fromState), new State<>(toState), StateEvent.COMPLETE));
+        tSet.add(new Transition<>(State.from(fromState), State.from(toState), StateEvent.COMPLETE));
         return this;
     }
 

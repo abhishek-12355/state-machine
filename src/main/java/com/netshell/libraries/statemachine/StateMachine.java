@@ -10,9 +10,9 @@ public final class StateMachine<I, T extends StateMachineInterface<I>> {
 
     private final T tObject;
     private final StateProvider<I> stateProvider;
-    private final Consumer<StateMachineUpdateParaketers> consumer;
+    private final Consumer<StateMachineUpdateParameters> consumer;
 
-    StateMachine(T tObject, StateProvider<I> stateProvider, Consumer<StateMachineUpdateParaketers> consumer) {
+    StateMachine(T tObject, StateProvider<I> stateProvider, Consumer<StateMachineUpdateParameters> consumer) {
         this.tObject = tObject;
         this.stateProvider = stateProvider;
         this.consumer = consumer;
@@ -27,7 +27,7 @@ public final class StateMachine<I, T extends StateMachineInterface<I>> {
         final State<I> nextState = stateProvider.nextState(originalState, event);
         tObject.setState(nextState.getState());
         try {
-            consumer.accept(new StateMachineUpdateParaketers(tObject, event, originalState, nextState));
+            consumer.accept(new StateMachineUpdateParameters(tObject, event, originalState, nextState));
         } catch (Exception e) {
             tObject.setState(originalState.getState());
             throw e;
@@ -42,13 +42,13 @@ public final class StateMachine<I, T extends StateMachineInterface<I>> {
         return tObject;
     }
 
-    public final class StateMachineUpdateParaketers {
+    public final class StateMachineUpdateParameters {
         private final T tObject;
         private final StateEvent event;
         private final State<I> originalState;
         private final State<I> newState;
 
-        StateMachineUpdateParaketers(T tObject, StateEvent event, State<I> originalState, State<I> newState) {
+        StateMachineUpdateParameters(T tObject, StateEvent event, State<I> originalState, State<I> newState) {
             this.tObject = tObject;
             this.event = event;
             this.originalState = originalState;

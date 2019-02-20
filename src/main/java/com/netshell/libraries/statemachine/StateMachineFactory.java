@@ -17,7 +17,7 @@ public class StateMachineFactory {
         final String singletonName = composeSingletonName(StateMachine.class, tObject.getClass());
         final SingletonManager manager = CommonUtils.getManager(STATE_MACHINE);
         if (!manager.isRegistered(singletonName)) {
-            synchronized (STATE_MACHINE) {
+            synchronized (manager) {
                 if (!manager.isRegistered(singletonName)) {
                     manager.registerSingleton(singletonName, createStateMachine(tObject));
                 }
@@ -27,10 +27,9 @@ public class StateMachineFactory {
                 .orElseThrow(() -> new IllegalStateException("No StateMachine Can be created"));
     }
 
-    public static <I, T extends StateMachineInterface<I>> void registerStateMachine(Class<T> tClass, Consumer<StateMachine.StateMachineUpdateParaketers> stateConsumer) {
+    public static <I, T extends StateMachineInterface<I>> void registerStateMachine(Class<T> tClass, Consumer<StateMachine<I, T>.StateMachineUpdateParameters> stateConsumer) {
         final StateMachineBuilder<I, T> builder = new StateMachineBuilder<>();
-        builder.withStateConsumer(stateConsumer == null ? p -> {
-        } : stateConsumer);
+        builder.withStateConsumer(stateConsumer == null ? p -> {} : stateConsumer);
         CommonUtils.getManager(STATE_MACHINE)
                 .registerSingleton(composeSingletonName(StateMachineBuilder.class, tClass), builder);
     }
@@ -49,15 +48,15 @@ public class StateMachineFactory {
     }
 
     private static class StateMachineBuilder<I, T extends StateMachineInterface<I>> {
-        private Consumer<StateMachine.StateMachineUpdateParaketers> consumer;
+        private Consumer<StateMachine<I, T>.StateMachineUpdateParameters> consumer;
 
         StateMachine<I, T> build(T tObject) {
             final ParameterizedType type = (ParameterizedType) tObject.getClass().getGenericSuperclass();
             final StateProvider<I> provider = StateProviderFactory.getStateProvider((Class<I>) type.getActualTypeArguments()[0]);
-            return new StateMachine<>(tObject, provider, consumer);
+            return new StateMachine<I, T>(tObject, provider, consumer);
         }
 
-        StateMachineBuilder withStateConsumer(Consumer<StateMachine.StateMachineUpdateParaketers> consumer) {
+        StateMachineBuilder withStateConsumer(Consumer<StateMachine<I, T>.StateMachineUpdateParameters> consumer) {
             this.consumer = consumer;
             return this;
         }
